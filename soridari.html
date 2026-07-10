@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>소리다리</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;700;900&family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,600;1,300&family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --bg:#0c1520;
+  --bridge:#c8a84b;
+  --left-bg:#faf8f5;
+  --left-accent:#c0392b;
+  --right-bg:#161b22;
+  --right-accent:#d29922;
+  --text-light:#e8e0d5;
+  --text-dim:#8a9bb0;
+}
+
+body{
+  font-family:'Be Vietnam Pro',sans-serif;
+  background:var(--bg);
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  padding:32px 20px 48px;
+  overflow-x:hidden;
+  position:relative;
+}
+
+/* 배경 별 느낌 */
+body::before{
+  content:'';position:absolute;inset:0;
+  background:
+    radial-gradient(ellipse 60% 40% at 50% 0%, rgba(200,168,75,.07) 0%, transparent 70%),
+    radial-gradient(ellipse 30% 50% at 20% 80%, rgba(192,57,43,.04) 0%, transparent 60%),
+    radial-gradient(ellipse 30% 50% at 80% 80%, rgba(210,153,34,.05) 0%, transparent 60%);
+  pointer-events:none;
+}
+
+/* ── 타이틀 영역 ── */
+.title-block{
+  text-align:center;
+  margin-bottom:48px;
+  position:relative;
+  z-index:1;
+}
+
+.title-kr{
+  font-family:'Noto Serif KR',serif;
+  font-size:clamp(44px,8vw,72px);
+  font-weight:900;
+  letter-spacing:-1px;
+  line-height:1;
+  margin-bottom:10px;
+}
+.title-sori{
+  background:linear-gradient(135deg,#c0392b 0%,#ff6b5b 35%,#fff 52%,#e74c3c 68%,#922b21 100%);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+.title-dari{
+  background:linear-gradient(135deg,#c8a84b 0%,#fff 40%,#c8a84b 55%,#fff 70%,#c8a84b 100%);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+
+.title-en{
+  font-family:'Be Vietnam Pro',sans-serif;
+  font-size:clamp(10px,2.2vw,13px);
+  font-weight:300;
+  font-style:italic;
+  letter-spacing:3px;
+  text-transform:uppercase;
+  color:var(--bridge);
+  opacity:.85;
+  margin-bottom:18px;
+}
+
+.title-desc{
+  font-size:13.5px;
+  color:var(--text-dim);
+  line-height:1.8;
+}
+.title-desc .kr{
+  font-family:'Noto Sans KR',sans-serif;
+  font-size:12px;
+  display:block;
+  margin-top:3px;
+  color:#6a8099;
+}
+
+/* ── 다리 모티프 ── */
+.bridge-motif{
+  position:relative;
+  display:flex;
+  align-items:flex-end;
+  justify-content:center;
+  gap:0;
+  margin-bottom:48px;
+  width:100%;
+  max-width:680px;
+}
+
+/* 수직 기둥 두 개 */
+.bridge-pillar{
+  width:1px;
+  height:52px;
+  background:linear-gradient(to bottom, var(--bridge), rgba(200,168,75,.1));
+  flex-shrink:0;
+  position:absolute;
+  bottom:0;
+}
+.bridge-pillar.left{ left:calc(50% - 120px); }
+.bridge-pillar.right{ right:calc(50% - 120px); }
+
+/* 수평 케이블 */
+.bridge-cable{
+  height:1px;
+  flex:1;
+  max-width:240px;
+  background:linear-gradient(to right, rgba(200,168,75,.15), var(--bridge) 50%, rgba(200,168,75,.15));
+  position:absolute;
+  bottom:0;
+  left:50%;
+  transform:translateX(-50%);
+  width:240px;
+}
+
+/* 중앙 원 */
+.bridge-center{
+  width:8px;height:8px;
+  border-radius:50%;
+  background:var(--bridge);
+  position:absolute;
+  bottom:-4px;left:50%;
+  transform:translateX(-50%);
+  box-shadow:0 0 12px rgba(200,168,75,.6);
+}
+
+/* ── 카드 두 개 ── */
+.cards-row{
+  display:flex;
+  gap:20px;
+  width:100%;
+  max-width:680px;
+  position:relative;
+  z-index:1;
+}
+
+.portal-card{
+  flex:1;
+  border-radius:20px;
+  padding:32px 24px 36px;
+  cursor:pointer;
+  position:relative;
+  overflow:hidden;
+  transition:transform .25s cubic-bezier(.34,1.4,.64,1), box-shadow .25s;
+  text-decoration:none;
+}
+.portal-card:hover{
+  transform:translateY(-6px) scale(1.015);
+}
+
+/* 왼쪽 — 발음 (크림/빨강) */
+.card-left{
+  background:var(--left-bg);
+  border:1.5px solid #e8e2d9;
+  box-shadow:0 4px 32px rgba(192,57,43,.08), 0 1px 4px rgba(0,0,0,.06);
+}
+.card-left:hover{
+  box-shadow:0 14px 48px rgba(192,57,43,.15), 0 2px 8px rgba(0,0,0,.08);
+}
+.card-left::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,var(--left-accent),#e74c3c);
+  border-radius:20px 20px 0 0;
+}
+
+/* 오른쪽 — 문화여행 (다크/노랑) */
+.card-right{
+  background:var(--right-bg);
+  border:1.5px solid #30363d;
+  box-shadow:0 4px 32px rgba(210,153,34,.08), 0 1px 4px rgba(0,0,0,.3);
+}
+.card-right:hover{
+  box-shadow:0 14px 48px rgba(210,153,34,.18), 0 2px 8px rgba(0,0,0,.4);
+}
+.card-right::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,var(--right-accent),#f5d87a);
+  border-radius:20px 20px 0 0;
+}
+
+/* 카드 내부 */
+.card-icon{
+  font-size:42px;
+  display:block;
+  margin-bottom:16px;
+  line-height:1;
+}
+.card-tag{
+  font-size:9px;
+  font-weight:700;
+  text-transform:uppercase;
+  letter-spacing:2px;
+  margin-bottom:8px;
+  display:block;
+}
+.card-left .card-tag{ color:var(--left-accent); }
+.card-right .card-tag{ color:var(--right-accent); }
+
+.card-title{
+  font-family:'Noto Serif KR',serif;
+  font-size:26px;
+  font-weight:700;
+  line-height:1.2;
+  margin-bottom:10px;
+}
+.card-left .card-title{ color:#1a1410; }
+.card-right .card-title{ color:#e6edf3; }
+
+.card-title-vn{
+  font-size:12px;
+  font-weight:400;
+  display:block;
+  margin-top:3px;
+  font-style:italic;
+}
+.card-left .card-title-vn{ color:#a89880; }
+.card-right .card-title-vn{ color:#8b949e; }
+
+.card-desc{
+  font-size:12.5px;
+  line-height:1.7;
+  margin-bottom:24px;
+}
+.card-left .card-desc{ color:#6b5f52; }
+.card-right .card-desc{ color:#8b949e; }
+
+.card-chips{
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+  margin-bottom:28px;
+}
+.chip{
+  font-size:10px;
+  font-weight:600;
+  padding:4px 9px;
+  border-radius:20px;
+}
+.card-left .chip{
+  background:#f5f2ee;
+  color:#6b5f52;
+  border:1px solid #e8e2d9;
+}
+.card-right .chip{
+  background:#21262d;
+  color:#8b949e;
+  border:1px solid #30363d;
+}
+
+.card-cta{
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+  font-size:13px;
+  font-weight:700;
+  padding:11px 20px;
+  border-radius:10px;
+  border:none;
+  cursor:pointer;
+  font-family:'Be Vietnam Pro',sans-serif;
+  transition:all .15s;
+}
+.card-left .card-cta{
+  background:var(--left-accent);
+  color:#fff;
+}
+.card-left .card-cta:hover{ background:#a93226; }
+.card-right .card-cta{
+  background:var(--right-accent);
+  color:#000;
+}
+.card-right .card-cta:hover{ background:#e8b840; }
+
+/* 카드 배경 장식 */
+.card-deco{
+  position:absolute;
+  bottom:-20px;right:-20px;
+  font-size:100px;
+  opacity:.04;
+  line-height:1;
+  pointer-events:none;
+  user-select:none;
+}
+.card-right .card-deco{ opacity:.06; }
+
+/* 푸터 */
+.footer{
+  margin-top:40px;
+  text-align:center;
+  font-size:11px;
+  color:#3a4f63;
+  line-height:1.8;
+  position:relative;
+  z-index:1;
+}
+
+/* 모바일 */
+@media(max-width:500px){
+  .cards-row{ flex-direction:column; max-width:340px; }
+  .portal-card{ padding:26px 20px 30px; }
+  .card-title{ font-size:22px; }
+  .bridge-pillar.left{ left:calc(50% - 80px); }
+  .bridge-pillar.right{ right:calc(50% - 80px); }
+  .bridge-cable{ width:160px; }
+}
+</style>
+</head>
+<body>
+
+<div class="title-block">
+  <div class="title-kr"><span class="title-sori">소리</span><span class="title-dari">다리</span></div>
+  <div class="title-en">Connecting Sounds, Connecting Cultures</div>
+  <div class="title-desc">
+    한국 문화와 함께 배우는 한국어 발음
+    <span class="kr">Học phát âm tiếng Hàn qua văn hóa Hàn Quốc</span>
+  </div>
+</div>
+
+<!-- 다리 모티프 -->
+<div class="bridge-motif" style="height:52px;max-width:680px;width:100%;">
+  <div class="bridge-pillar left"></div>
+  <div class="bridge-pillar right"></div>
+  <div class="bridge-cable"></div>
+  <div class="bridge-center"></div>
+</div>
+
+<!-- 두 카드 -->
+<div class="cards-row">
+
+  <!-- 왼쪽: 발음 -->
+  <div class="portal-card card-left" onclick="openPronunciation()">
+    <span class="card-deco">발</span>
+    <span class="card-icon">📖</span>
+    <span class="card-tag">Phát âm · 발음</span>
+    <div class="card-title">발음
+      <span class="card-title-vn">Luyện phát âm</span>
+    </div>
+    <p class="card-desc">베트남어 화자가 어려워하는 한국어 발음을 단계별로 학습해요. 자음·모음·받침·연음 4개 챕터.</p>
+    <div class="card-chips">
+      <span class="chip">자음 체계</span>
+      <span class="chip">모음 체계</span>
+      <span class="chip">받침</span>
+      <span class="chip">연음</span>
+    </div>
+    <button class="card-cta">시작하기 →</button>
+  </div>
+
+  <!-- 오른쪽: 문화여행 -->
+  <div class="portal-card card-right" onclick="openCulture()">
+    <span class="card-deco">🗺</span>
+    <span class="card-icon">🗺️</span>
+    <span class="card-tag">Văn hóa · 문화</span>
+    <div class="card-title">문화여행
+      <span class="card-title-vn">Du lịch văn hóa</span>
+    </div>
+    <p class="card-desc">한국 지도 위 12개 지역을 여행하며 현지 문화와 음식을 통해 발음을 실전으로 연습해요.</p>
+    <div class="card-chips">
+      <span class="chip">🗺️ 지역 해금</span>
+      <span class="chip">🃏 문화 카드</span>
+      <span class="chip">🎤 발음 미션</span>
+    </div>
+    <button class="card-cta">출발하기 →</button>
+  </div>
+
+</div>
+
+<div class="footer">
+  베트남어 화자를 위한 한국어 발음 교육 플랫폼<br>
+  Nền tảng học phát âm tiếng Hàn dành cho người Việt
+</div>
+
+<script>
+function openPronunciation(){
+  // 학습 프로그램으로 이동 (같은 탭)
+  window.location.href='korean-pronunciation.html';
+}
+function openCulture(){
+  // 문화여행 RPG로 이동 (같은 탭)
+  window.location.href='korean-rpg.html';
+}
+</script>
+</body>
+</html>
